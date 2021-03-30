@@ -1,6 +1,7 @@
 package com.example.rxjava;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +10,13 @@ import com.example.rxjava.Model.List_Users;
 import com.example.rxjava.Model.Users;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -21,11 +25,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class OperatorActivity extends AppCompatActivity {
 
     CompositeDisposable compositeDisposable;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        searchView = findViewById(R.id.searchView_main);
 
         //Create
         /*
@@ -435,7 +442,7 @@ public class OperatorActivity extends AppCompatActivity {
         });
 */
         //Buffer
-        @NonNull Observable<List<Users>> bufferObservable = Observable.fromIterable(List_Users.getUsers())
+        /*  @NonNull Observable<List<Users>> bufferObservable = Observable.fromIterable(List_Users.getUsers())
                 .buffer(2)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
@@ -464,8 +471,58 @@ public class OperatorActivity extends AppCompatActivity {
                 Log.d("On_complete","complete");
             }
         });
+*/
+        //Debounce
+        //material searchbar
+        Observable<String> searchobservable = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Throwable {
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+
+                        if(!emitter.isDisposed())
+                        emitter.onNext(newText);
+                        Log.d("On_message","you type : "+newText);
+                        return false;
+                    }
+                });
+            }
+        })
+                .debounce(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+
+        searchobservable.subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull String query_search) {
+            Log.d("On_Next_Debounce",query_search);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d("On_Error",e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d("On_Complete","Complete");
+            }
+        });
+
 
     }
+
 
     @Override
     protected void onDestroy() {
