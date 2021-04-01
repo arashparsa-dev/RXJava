@@ -14,7 +14,7 @@ public class APIClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                   // .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                     .build();
         }
         return retrofit;

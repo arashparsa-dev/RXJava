@@ -16,7 +16,7 @@
         />
 
     <TextView
-        android:fontFamily="cursive"
+        android:fontFamily="casual"
         android:id="@+id/tv_main_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -88,6 +88,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_favorite_24"
             android:layout_marginLeft="16dp"
+
             />
         <TextView
             android:fontFamily="cursive"
@@ -95,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="85286"
+            android:text="+85286"
             android:textSize="18sp"
             android:textColor="@color/textcolor"
             android:layout_marginLeft="4dp"
@@ -113,6 +114,7 @@
         android:layout_toRightOf="@id/linear_like"
         android:layout_marginTop="16dp"
 
+
         >
         <ImageView
             android:layout_width="wrap_content"
@@ -126,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="785752"
+            android:text="+785752"
             android:textSize="18sp"
             android:textColor="@color/textcolor"
             android:layout_marginLeft="4dp"

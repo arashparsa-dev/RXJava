@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.rxjava.Adapter.PostAdapter;
 import com.example.rxjava.Model.Post;
 import com.example.rxjava.api.APIClient;
 import com.example.rxjava.api.APIInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -20,6 +22,9 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -29,7 +34,11 @@ public class HomeActivity extends AppCompatActivity {
     PostAdapter adapter;
     String url = "http://192.168.1.12/rxjava/";
 
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
+    List<Post> list = new ArrayList<>();
+
+
+    //CompositeDisposable compositeDisposable = new CompositeDisposable();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +51,25 @@ public class HomeActivity extends AppCompatActivity {
 
         request = APIClient.getApiClient(url).create(APIInterface.class);
 
+        //retrofit
+        request.getPost().enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                list = response.body();
+                adapter = new PostAdapter(getApplicationContext(), list);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("error", t.getMessage() + "");
+            }
+        });
 
 
+        //rx
+        /*
         compositeDisposable.add(request.getPost()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
@@ -54,6 +80,9 @@ public class HomeActivity extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
             }
         }));
+        */
+
+
 
         //single is good for take error log
        /* compositeDisposable.add(request.getPost()
@@ -73,9 +102,11 @@ public class HomeActivity extends AppCompatActivity {
         }));*/
     }
 
-    @Override
+   /* @Override
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.clear();
     }
+    */
+
 }

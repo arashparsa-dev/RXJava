@@ -15,6 +15,7 @@ import com.example.rxjava.Model.Post;
 import com.example.rxjava.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> {
@@ -48,8 +49,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
         holder.tv_name.setText(data.get(position).getName());
         holder.tv_location.setText(data.get(position).getLocation());
         holder.tv_description.setText(data.get(position).getDescription());
-        holder.tv_like.setText(data.get(position).getFavorite());
-        holder.tv_comment.setText(post.getComments());
+
+
+        DecimalFormat decimalFormat = new DecimalFormat("###,###");
+        String Favorite = data.get(position).getFavorite();
+        holder.tv_like.setText(decimalFormat.format(Integer.valueOf(Favorite)));
+        String Comment  = data.get(position).getComments();
+        holder.tv_comment.setText(decimalFormat.format(Integer.valueOf(Comment)));
+        //holder.tv_comment.setText(" + "+decimalFormat.format(Integer.valueOf(Comment)));
 
     }
 
